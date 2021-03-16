@@ -1,5 +1,6 @@
 build:
-	mkdir -p bin
-	g++ *.cpp -o bin/main
-run: build
-	./bin/main
+	mkdir -p out
+	em++ *.cpp -o out/index.html
+clean:
+	rm out/*
+

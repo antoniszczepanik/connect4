@@ -1,8 +1,8 @@
-#define WIDTH  7
-#define HEIGHT 6
+constexpr unsigned int WIDTH = 7;
+constexpr unsigned int HEIGHT = 6;
 
-#define EVEN_PLAYER_SYMBOL 'X'
-#define ODD_PLAYER_SYMBOL 'O'
+constexpr char EVEN_SYMBOL = 'X';
+constexpr char ODD_SYMBOL = 'O';
 
 class Board {
     public:

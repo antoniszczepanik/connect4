@@ -10,9 +10,9 @@ void Board::printBoard(){
             int value = board[i][j];
             char repr = ' ';
             if (value == 1){
-                repr = EVEN_PLAYER_SYMBOL;
+                repr = EVEN_SYMBOL;
             } else if (value == -1) {
-                repr = ODD_PLAYER_SYMBOL;
+                repr = ODD_SYMBOL;
             }
             cout << repr  << "|";
         }
@@ -48,6 +48,6 @@ void Board::move(bool player, int column){
         next_move = !player;
     }
     if (isFinished()){
-        cout << (player ? ODD_PLAYER_SYMBOL : EVEN_PLAYER_SYMBOL) << " won!" << endl;
+        cout << (player ? ODD_SYMBOL : EVEN_SYMBOL) << " won!" << endl;
     }
 }
