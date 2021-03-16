@@ -4,3 +4,6 @@ build:
 clean:
 	rm out/*
 
+server:
+	cd out && python3 -m http.server
+
