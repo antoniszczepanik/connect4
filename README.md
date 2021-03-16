@@ -30,9 +30,21 @@ WASM:
 	- this will be done entirely in C++
 
 ## Board Representation
-The board representation should allow to
+
+The board representation should allow to easily
+
 1. Check for available moves
+2. Verify if winning condition is satisfied
+3. Check value function for both players
 
-Interesting benchmark https://tromp.github.io/c4/fhour.html
-And representation https://en.wikipedia.org/wiki/Fhourstones + description https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
+Let's try to represent the board using Fhourstone representation:
 
+  6 13 20 27 34 41 48   55 62     Additional row
++---------------------+ 
+| 5 12 19 26 33 40 47 | 54 61     top row
+| 4 11 18 25 32 39 46 | 53 60
+| 3 10 17 24 31 38 45 | 52 59
+| 2  9 16 23 30 37 44 | 51 58
+| 1  8 15 22 29 36 43 | 50 57
+| 0  7 14 21 28 35 42 | 49 56 63  bottom row
++---------------------+

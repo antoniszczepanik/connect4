@@ -1,16 +1,22 @@
-constexpr unsigned int WIDTH = 7;
-constexpr unsigned int HEIGHT = 6;
+constexpr char ODD_SYMBOL = 'X';
+constexpr char EVEN_SYMBOL = 'O';
+constexpr long long LL1 = 1;
 
-constexpr char EVEN_SYMBOL = 'X';
-constexpr char ODD_SYMBOL = 'O';
+typedef long long bitboard;
 
 class Board {
     public:
+        bool isWin(bitboard board);
+        void makeMove(int column);
+        void undoMove();
+        void getMoves(bool* available); // Get all possible moves
+//        int evaluateBoard();
+//        int minMax(int depth); // Get next best move with minMax algorithm
+        void printMoves();
         void printBoard();
-        void move(bool player, int column);
-        bool isLegal(bool player, int column);
     private:
-        int board[HEIGHT][WIDTH] = {{}};
-        int heights[WIDTH] = {0};
-        bool next_move = false; // false is even, true is odd
+        bitboard boards[2] = {0, 0}; // Two seperate boards for O and X
+        int heights[7] = {0, 7, 14, 21, 28, 35, 42}; // how high is each
+        int counter = 0; // Move counter to quickly distinquish between players
+        int moves[42];
 };
