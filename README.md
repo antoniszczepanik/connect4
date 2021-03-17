@@ -26,4 +26,3 @@ The board will be represented using Fhourstone representation:
 +---------------------+
 
 ## Code structure
-

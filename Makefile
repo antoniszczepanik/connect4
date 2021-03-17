@@ -1,6 +1,6 @@
 build:
 	mkdir -p out
-	g++ *.cpp -o out/main
+	g++ -O1 *.cpp -o out/main
 run: build
 	./out/main
 clean:
