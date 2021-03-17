@@ -9,8 +9,15 @@ using namespace std;
 // and check winning conditions. For details please see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
 
-int Board::getValue(){
-    return 0;
+int Board::getValue(bool isEvenPlayer){
+    bitboard board = boards[(isEvenPlayer ? 0 : 1)];
+    int directions[] = { 1, 7, 6, 8 }; // vert, diag, diag, horizon
+    bitboard bb;
+    int sum = 0;
+    for (const int& direction : directions) {
+        sum += board & (board >> direction);
+    }
+    return sum;
 }
 
 int Board::getNextMove(){
@@ -20,11 +27,11 @@ int Board::getNextMove(){
 int Board::miniMax(int depth, bool isEvenPlayer, bool returnIndex){
     // NOTE: depth == 0 is only allowed when not returning index
     if (!returnIndex){
-        if (isWin(boards[counter & 1])){
+        if (isWin()){
             return isEvenPlayer ? INF : NEG_INF;
         }
         if (depth == 0){
-           return getValue();
+           return getValue(isEvenPlayer);
         }
     }
     bool available[7] = {false};
@@ -106,12 +113,13 @@ void Board::undoMove(){
     boards[counter & 1] ^= LL1 << --heights[previous_move];
 }
 
-bool Board::isWin(bitboard board) {
+bool Board::isWin() {
+    bitboard board = boards[counter & 1];
     int directions[] = { 1, 7, 6, 8 }; // vert, diag, diag, horizon
-    long long bb;
+    bitboard temp;
     for (const int& direction : directions) {
-        bb = board & (board >> direction);
-        if ((bb & (bb >> (2 * direction))) != 0){
+        temp = board & (board >> direction);
+        if ((temp & (temp >> (2 * direction))) != 0){
             return true;
         }
     }
@@ -149,10 +157,6 @@ void Board::printBoard(){
     cout << "|";
     for (int i = 0; i < 7; i++){
         cout << i << "|";
-    }
-    cout << endl;
-    if ( isWin(boards[(counter-1) & 1]) ){
-        cout << "There is a win on a board!" << endl;
     }
     cout << endl;
 }

@@ -12,11 +12,11 @@ typedef long long bitboard;
 
 class Board {
     public:
-        bool isWin(bitboard board);
+        bool isWin();
         void makeMove(int column, bool print=false);
         void undoMove();
         void getMoves(bool* available); // Get all possible moves
-        int getValue(); // Get current board value
+        int getValue(bool isEvenPlayer); // Get current board value
         int getNextMove(); // Get next "best" optimal move
         int miniMax(int depth, bool isEvenPlayer, bool returnIndex); // FUN
         int minMax(int depth); // Get next best move with minMax algorithm
