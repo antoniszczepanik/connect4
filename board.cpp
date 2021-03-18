@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include <unordered_map>
 #include <assert.h>
 #include "board.h"
 
@@ -9,17 +10,20 @@ using namespace std;
 // allows to use bitwise operations to calculate the board value 
 // and check winning conditions. For details please see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
-//
-// TODO: (counter & 1) could be calculated once for some functions
 
-int Board::getValue(){
-    bitboard board = boards[((counter & 1) ? 0 : 1)];
-    int directions[] = { 1, 7, 6, 8 }; // vert, diag, diag, horizon
-    int sum = 0;
-    for (const int& direction : directions) {
-        sum += countSetBits(board & (board >> direction));
+int Board::getValue(bool print){
+    bool isMaximizer = counter & 1;
+    bitboard board = boards[(isMaximizer ? 0 : 1)];
+    int score = 0;
+    for (int i = 0; i < 14; i++){
+        if (IS_VALUE_USED[i]){
+            score += countSetBits(board & MASKS[i]) * i;
+        }
     }
-    return (counter & 1) ? sum : -sum;
+    if (print){
+        cout << "Value for the current boards is " << score << endl;
+    }
+    return isMaximizer ? score : -score;
 }
 
 unsigned int Board::countSetBits(bitboard n)
@@ -32,17 +36,17 @@ unsigned int Board::countSetBits(bitboard n)
         return count;
 }
 
-int Board::getNextMove(){
-    pair<int, int> value_n_index = miniMax(MAX_DEPTH);
+int Board::getNextMove(int search_depth){
+    pair<int, int> value_n_index = miniMax(search_depth);
     // if best value for maximizer is the lowest possible then the game is lost
     if (value_n_index.first == ((counter & 1) ? NEG_INF : INF)){
-        cout << ((counter & 1) ? "O" : "X") << " won the game!";
+        cout << ((counter & 1) ? "O" : "X") << " won the game!" << endl;
+        // TODO: The game should try to play until finish, even when it knows
+        // it loses. Human oponent counld make a mistake.
+        return -1;
     }
-
-    assert(value_n_index.second >= 0);
-    assert(value_n_index.second < 7);
-    cout << "Optimal move is " << value_n_index.second;
-    cout << " with value " << value_n_index.first << endl;
+    //cout << "Optimal move is " << value_n_index.second;
+    //cout << " with value " << value_n_index.first << endl;
     return value_n_index.second;
 }
 
@@ -62,7 +66,7 @@ pair<int, int> Board::miniMax(int depth){
     best_value = (counter & 1) ? NEG_INF : INF;
     for (int i = 0; i < 7; i++){
         if (available[i]){
-            makeMove(i);
+            _makeMove(i);
             cur_value= miniMax(depth-1).first;
             undoMove();
             if (cur_value == ((counter & 1) ? INF : NEG_INF)){
@@ -100,25 +104,33 @@ void Board::getMoves(bool* available) {
 void Board::printMoves(){
     bool available[7] = {false};
     getMoves(available);
-    cout << "Moves available: ";
-    for (int i = 0; i < 7; i++){
-        if (available[i]){
-            cout << i << " ";
-        }
+    //cout << "Moves available: ";
+    //for (int i = 0; i < 7; i++){
+    //    if (available[i]){
+    //        cout << i << " ";
+    //    }
+    //}
+    //cout << endl;
+}
+
+int Board::makeMove(int column){
+    _makeMove(column);
+    printBoard();
+    printMoves();
+    //cout << "Board representation is for O" << boards[false] << endl;
+    //cout << "Board representation is for X" << boards[true] << endl;
+    cout << "Next move is for ";
+    cout << ((counter & 1) ? "true maximizer (X)" : "false minimizer (O)") << endl;
+    if (isWin()){
+        return -1;
     }
-    cout << endl;
+    return 0;
 }
 
 
-void Board::makeMove(int column, bool print){
+void Board::_makeMove(int column){
     moves[counter] = column;
     boards[counter++ & 1] ^= LL1 << heights[column]++;
-    if (print){
-        printBoard();
-        printMoves();
-        cout << "Next move is for ";
-        cout << ((counter & 1) ? "true maximizer (X)" : "false minimizer (O)") << endl;
-    }
 }
 
 void Board::undoMove(){
@@ -130,7 +142,7 @@ bool Board::isWin() {
     // Will check if previously made move was a winning move
     // Hence we need to consider previous board offseting counter by 1
     bitboard board = boards[(counter - 1)& 1];
-    int directions[] = { 1, 7, 6, 8 }; // vert, diag, diag, horizon
+    int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
     bitboard temp;
     for (const int& direction : directions) {
         temp = board & (board >> direction);
@@ -169,6 +181,7 @@ void Board::printBoard(){
         }
         cout << endl;
     }
+    cout << " _ _ _ _ _ _ _ " << endl;
     cout << "|";
     for (int i = 0; i < 7; i++){
         cout << i << "|";

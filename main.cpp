@@ -3,7 +3,7 @@
 
 using namespace std;
 
-int main(){
+int main(int argc, char* argv[]){
     Board b;
     int move;
     while (true) {
@@ -12,11 +12,20 @@ int main(){
         if (move == -1){
             b.undoMove();
             b.printBoard();
+            continue;
         } else if (move == -2){
-            move = b.getNextMove();
-            b.makeMove(move, true);
-        } else {
-            b.makeMove(move, true);
+            move = b.getNextMove(stoi(argv[1]));
+            if (move == -1){
+                cout << "No more moves, the game is won/lost!" << endl;
+                exit(-1);
+            }
+        } else if (move == -3){
+            b.getValue(true);
+            continue;
         }
+        if (b.makeMove(move) == -1){
+            cout << "Game over!" << endl;
+            exit(-1);
+        };
     }
 }
