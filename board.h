@@ -6,18 +6,10 @@ constexpr char EVEN_SYMBOL = 'O';
 constexpr long long LL1 = 1;
 constexpr int INF = std::numeric_limits<int>::max();
 constexpr int NEG_INF = std::numeric_limits<int>::min();
-constexpr int MAX_DEPTH = 10;
 
-// This is a map used for valuation function - each field is assigned a value
+// This map is used for valuation function - each field is assigned a value
 // just like in https://web.stonehill.edu/compsci/CS211/Assignments/c43.gif
-constexpr long long IS_VALUE_USED[14] = {
-    false, false, false,
-    true, true, true, true, true, true,
-    false,
-    true, true,
-    false,
-    true
-};
+// Later boards are masked, which makes valuating given position a lot faster.
 constexpr long long MASKS[14] = {
     0, 0, 0,          // 1, 2, 3
     145135534866465,  // 3
@@ -33,6 +25,17 @@ constexpr long long MASKS[14] = {
     25165824          // 13
 };
 
+// Representation of "present" masks, makes iterating over them a little easier
+constexpr long long IS_VALUE_USED[14] = {
+    false, false, false,
+    true, true, true, true, true, true,
+    false,
+    true, true,
+    false,
+    true
+};
+
+#define EVEN_PLAYER (counter & 1)
 typedef long long bitboard;
 
 class Board {
@@ -40,17 +43,18 @@ class Board {
         bool isWin();
         int makeMove(int column);
         void undoMove();
-        void getMoves(bool* available); // Get all possible moves
-        int getValue(bool print=false); // Get current board value
-        int getNextMove(int search_depth); // Get next "best" optimal move
-        std::pair<int, int> miniMax(int depth); // FUN
+        // Update available list with all possible moves
+        void getMoves(bool* available);
+        int getValue(bool print=false);  // Get current board value
+        int getNextMove(int search_depth);  // Get next "best" optimal move
+        std::pair<int, int> miniMax(int depth);  // All the fun :)
         void printMoves();
         void printBoard();
     private:
-        bitboard boards[2] = {0, 0}; // Two seperate boards for O and X
-        int heights[7] = {0, 7, 14, 21, 28, 35, 42}; // how high is each
-        int counter = 0; // Move counter to quickly distinquish between players
-        int moves[42];
+        bitboard boards[2] = {0, 0};  // Two seperate boards for O and X
+        int heights[7] = {0, 7, 14, 21, 28, 35, 42};  // Mark height in each col
+        int counter = 0;  // Allows to distinguish between players with (counter & 1)k
+        int move_history[42];
         unsigned int countSetBits(bitboard n);
-        void _makeMove(int column);
+        void updateBoard(int column);
 };
