@@ -1,19 +1,23 @@
 # Connect4
-The goal of this project is to have a real time connect4 game with possibly best AI opponent.
-All the components will eventually run offline inside the browser.
-This will be implemented solely in C++ and then transpiled to WASM.
-It hope it will be interesting to compare results with native C++ speed.
+The goal of this project is to have connect4 game with possibly computer opponent in the browser. Game engine and AI will be implemented in C++ and transpiled to WASM, which means all computations will run on the client.
+It will be interesting to see how much we can optimize using bitboards, minimax algorithm and how much overhead is introduced by converting such implementation to WASM.
 
 ## AI
 Minimax algoritm is used for implementing the AI.
-TODO: Picking the best possible valuation function, currently seems little random.
-TOOD: alfa/beta pruning
-TODO: Memoising recently requested boards in a hash table.
+
+TODO:
+
+- Developing better valuation function, currently seems little random. How to mesure it?
+
+- Alfa-beta pruning
+
+- Memoising recently requested boards in a hash table. Kind of LRU cache for getting borard values. How much memory can we afford to use in the browser?
 
 ## Board Representation
-The board is represented using very efficient Fhourstone representation, which
-allows to perform bitwise operations to check for a win.
+The board is represented using 64 bit integer. It allows to perform
+bitwise operations to check for a win and available moves REALLY FAST. Bitwise operations are also used by valuation fanction.
 
+```
   6 13 20 27 34 41 48   55 62     Additional row
 +---------------------+ 
 | 5 12 19 26 33 40 47 | 54 61     top row
@@ -23,3 +27,4 @@ allows to perform bitwise operations to check for a win.
 | 1  8 15 22 29 36 43 | 50 57
 | 0  7 14 21 28 35 42 | 49 56 63  bottom row
 +---------------------+
+```
