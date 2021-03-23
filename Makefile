@@ -1,4 +1,4 @@
-SEARCH_DEPTH = 10
+SEARCH_DEPTH = 8
 build:
 	mkdir -p out
 	g++ -O1 *.cpp -o out/main

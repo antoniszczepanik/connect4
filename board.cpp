@@ -1,105 +1,19 @@
-#include "board.h"
 #include <iostream>
-#include <utility>
+#include "board.h"
 
 using namespace std;
 
-// This implementation uses bitboard as board representations to
+// This implementation uses bitboard as representations to
 // allow use of bitwise operations to calculate the board value
 // and check winning conditions. For details please see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
 
-int Board::getValue(bool print)
-{
-    int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
-    bitboard board = boards[(EVEN_PLAYER ? 0 : 1)];
-    int score = 0;
-    for (const int& direction : directions) {
-        // Three stones in a row
-        score += 42 * countSetBits(board & (board >> direction) & (board >> direction*2));
-    }
-    for (int i = 0; i < 14; i++) {
-        // Check how favorable is the position
-        if (IS_VALUE_USED[i]) {
-            score += countSetBits(board & MASKS[i]) * i;
-        }
-    }
-    return (EVEN_PLAYER ? score : -score);
-}
-
-
-unsigned int Board::countSetBits(bitboard n)
-{
-    int count = 0;
-    while (n) {
-        n &= (n - 1);
-        count++;
-    }
-    return count;
-}
-
-int Board::getNextMove(int search_depth)
-{
-    pair<int, int> value_n_index = miniMax(search_depth);
-    // if best value for maximizer is the lowest possible then the game is lost
-    if (value_n_index.first == (EVEN_PLAYER ? NEG_INF : INF)) {
-        cout << (EVEN_PLAYER ? "O" : "X") << " won the game!" << endl;
-        // TODO: The game should try to play until finish, even when it knows
-        // it loses. Human oponent could make a mistake.
-        return -1;
-    }
-    cout << "Optimal move is " << value_n_index.second;
-    cout << " with value " << value_n_index.first << endl;
-    return value_n_index.second;
-}
-
-pair<int, int> Board::miniMax(int depth)
-{
-    // If there's a win on the board or this is a max depth
-    // then the method returns -1 as index.
-    if (isWin()) {
-        // We need to check whose turn was it before the last move
-        return make_pair((((counter - 1) & 1) ? INF : NEG_INF), -1);
-    } else if (depth == 0) {
-        return make_pair(getValue(), -1);
-    }
-
-    bool available[7] = { false };
-    getMoves(available);
-    int best_value, best_value_ix, cur_value;
-    best_value = EVEN_PLAYER ? NEG_INF : INF;
-    for (int i = 0; i < 7; i++) {
-        if (available[i]) {
-            updateBoard(i);
-            cur_value = miniMax(depth - 1).first;
-            undoMove();
-            if (cur_value == (EVEN_PLAYER ? INF : NEG_INF)) {
-                return make_pair(cur_value, i);
-            }
-            if (EVEN_PLAYER) { // maximizer
-                if (cur_value > best_value) {
-                    best_value = cur_value;
-                    best_value_ix = i;
-                }
-            } else { // minimizer
-                if (cur_value < best_value) {
-                    best_value = cur_value;
-                    best_value_ix = i;
-                }
-            }
-        }
-    }
-    return make_pair(best_value, best_value_ix);
-}
-
 void Board::getMoves(bool* available)
 {
-    // The last spot (index 7) is reserved for a flag representing
-    // "is any field available"
-    long long top = 0b1000000100000010000001000000100000010000001000000;
-    bool isAnyAvailable = false;
+    // This row is not part of the board, used only to check for overflows
+    long long top_row = 0b1000000100000010000001000000100000010000001000000;
     for (int col = 0; col < 7; col++) {
-        if ((top & (LL1 << heights[col])) == 0) {
+        if ((top_row & (LL1 << heights[col])) == 0) {
             available[col] = true;
         }
     }
@@ -107,33 +21,33 @@ void Board::getMoves(bool* available)
 
 int Board::makeMove(int column)
 {
-    updateBoard(column);
+    rawMakeMove(column);
     printBoard();
     cout << "Next move is for ";
-    cout << (EVEN_PLAYER ? " maximizer (X)" : " minimizer (O)") << endl;
+    cout << (getNextPlayer() ? " maximizer (X)" : " minimizer (O)") << endl;
     if (isWin()) {
         return -1;
     }
     return 0;
 }
 
-void Board::updateBoard(int column)
+void Board::rawMakeMove(int column)
 {
     move_history[counter] = column;
-    boards[counter++ & 1] ^= LL1 << heights[column]++;
+    boards[getNextPlayer()] ^= LL1 << heights[column]++;
+    counter++;
 }
 
 void Board::undoMove()
 {
     int previous_move = move_history[--counter];
-    boards[counter & 1] ^= LL1 << --heights[previous_move];
+    boards[getNextPlayer()] ^= LL1 << --heights[previous_move];
 }
 
 bool Board::isWin()
 {
-    // Will check if previously made move was a winning move,
-    // hence we need to consider previous board offseting counter by 1
-    bitboard board = boards[(counter - 1) & 1];
+    // Will check if previously made move was a winning move
+    bitboard board = boards[getPreviousPlayer()];
     int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
     bitboard temp;
     for (const int& direction : directions) {
@@ -180,4 +94,16 @@ void Board::printBoard()
         cout << i << "|";
     }
     cout << endl;
+}
+
+bool Board::getNextPlayer(){
+    return (counter & 1);
+}
+
+bool Board::getPreviousPlayer(){
+    return ((counter -1) & 1);
+}
+
+bitboard* Board::getBitboards(){
+    return boards;
 }
