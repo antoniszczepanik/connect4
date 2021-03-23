@@ -87,6 +87,41 @@ int getValue(bitboard* bitboards, bool previous_player)
     return (previous_player ? score : -score);
 }
 
+int getValueBitwise(bitboard* bitboards, bool previous_player){
+    g_number_of_positions_checked += 1;    
+    int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
+    int weights[] = { 
+        9, // possible winning lines missing 1 stone
+        3, // possible winning positions missing 2 stones
+        1, // possible winning positions missing 3 stones
+    };
+    int score = 0;
+    bitboard board = bitboards[previous_player];
+    bitboard opponent = bitboards[~previous_player];
+    bitboard temp_board = board;
+    for (const int& direction : directions){
+        for (const int& weight : weights){
+            temp_board ^= temp_board >> direction; // add consequent move
+            temp_board &= VALID_MOVE_MASK;         // check for overflow
+            temp_board &= ~opponent;               // remove blocked by opponent
+            score += countWins(temp_board) * weight;
+        }
+    }
+    return (previous_player ? score : -score);
+}
+
+
+int countWins(bitboard board){
+    int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
+    bitboard temp;
+    int win_number = 0;
+    for (const int& direction : directions) {
+        temp = board & (board >> direction);
+        temp &= (temp >> (2 * direction));
+        win_number += countSetBits(temp);
+    }
+    return win_number;
+}
 
 unsigned int countSetBits(bitboard n)
 {
