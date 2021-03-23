@@ -1,5 +1,5 @@
-#include "board.h"
 #include <iostream>
+#include "search.h"
 
 using namespace std;
 
@@ -14,13 +14,14 @@ int main(int argc, char* argv[]){
             b.printBoard();
             continue;
         } else if (move == -2){
-            move = b.getNextMove(stoi(argv[1]));
+            move = getNextMove(b, stoi(argv[1]));
             if (move == -1){
                 cout << "No more moves, the game is won/lost!" << endl;
                 exit(-1);
             }
         } else if (move == -3){
-            b.getValue(true);
+            int value = getValue(b.getBitboards(),b.getPreviousPlayer());
+            cout << "Value of the board is: " << value << endl;
             continue;
         }
         if (b.makeMove(move) == -1){

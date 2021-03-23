@@ -34,27 +34,23 @@ constexpr long long IS_VALUE_USED[14] = {
     false,
     true
 };
-
-#define EVEN_PLAYER (counter & 1)
 typedef long long bitboard;
 
 class Board {
     public:
         bool isWin();
         int makeMove(int column);
+        void rawMakeMove(int column);
         void undoMove();
         // Update available list with all possible moves
         void getMoves(bool* available);
-        int getValue(bool print=false);  // Get current board value
-        int getNextMove(int search_depth);  // Get next "best" optimal move
-        std::pair<int, int> miniMax(int depth);  // All the fun :)
-        void printMoves();
         void printBoard();
+        bool getNextPlayer(); // 0 for even, 1 for odd player
+        bool getPreviousPlayer(); // 0 for even, 1 for odd
+        bitboard* getBitboards();
     private:
         bitboard boards[2] = {0, 0};  // Two seperate boards for O and X
         int heights[7] = {0, 7, 14, 21, 28, 35, 42};  // Mark height in each col
-        int counter = 0;  // Allows to distinguish between players with (counter & 1)k
+        int counter = 0;  // Allows to distinguish between players with (counter & 1)
         int move_history[42];
-        unsigned int countSetBits(bitboard n);
-        void updateBoard(int column);
 };
