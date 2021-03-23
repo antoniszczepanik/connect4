@@ -5,11 +5,7 @@ It will be interesting to see how much we can optimize using bitboards, minimax 
 ## AI
 Minimax algoritm is used for implementing the AI.
 
-TODO:
-
-- Developing better valuation function, currently seems little random. How to mesure it?
-
-- Alfa-beta pruning
+- There seems to be a problem with alpha/beta pruning.
 
 - Memoising recently requested boards in a hash table. Kind of LRU cache for getting borard values. How much memory can we afford to use in the browser?
 

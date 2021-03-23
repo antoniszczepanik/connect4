@@ -1,7 +1,7 @@
-SEARCH_DEPTH = 8
+SEARCH_DEPTH = 12
 build:
 	mkdir -p out
-	g++ -O1 *.cpp -o out/main
+	g++ *.cpp -o out/main
 run: build
 	./out/main ${SEARCH_DEPTH}
 clean:
