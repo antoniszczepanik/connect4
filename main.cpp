@@ -18,12 +18,16 @@ int main(int argc, char* argv[]){
         } else if (move == -2){
 
             auto start = high_resolution_clock::now();
+
             move = getNextMove(b, stoi(argv[1]));
+
             auto stop = high_resolution_clock::now();
             auto duration = duration_cast<microseconds>(stop - start);
-            cout << getCheckedPositionsCount() << " positions checked ";
-            cout << (getCheckedPositionsCount() /(duration.count()/1000));
-            cout << " Kpos/s" << endl;
+            double seconds_passed = (double)duration.count()/1000000;
+            double positions_checked = (double)getCheckedPositionsCount()/1000;
+            cout << positions_checked << "K positions checked at ";
+            cout << (positions_checked / seconds_passed) << "Kpos/s" << endl;
+
             if (move == -1){
                 cout << "No more moves, the game is won/lost!" << endl;
                 exit(-1);
