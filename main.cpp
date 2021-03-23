@@ -1,7 +1,9 @@
 #include <iostream>
+#include <chrono>
 #include "search.h"
 
 using namespace std;
+using namespace std::chrono;
 
 int main(int argc, char* argv[]){
     Board b;
@@ -14,7 +16,14 @@ int main(int argc, char* argv[]){
             b.printBoard();
             continue;
         } else if (move == -2){
+
+            auto start = high_resolution_clock::now();
             move = getNextMove(b, stoi(argv[1]));
+            auto stop = high_resolution_clock::now();
+            auto duration = duration_cast<microseconds>(stop - start);
+            cout << getRecursionCount() << " positions checked ";
+            cout << (getRecursionCount() /(duration.count()/1000));
+            cout << " Kpos/s" << endl;
             if (move == -1){
                 cout << "No more moves, the game is won/lost!" << endl;
                 exit(-1);

@@ -4,8 +4,11 @@
 
 using namespace std;
 
+int g_number_of_recursions;
+
 int getNextMove(Board b, int search_depth)
 {
+    g_number_of_recursions = 0;
     pair<int, int> value_n_index = miniMax(b, search_depth);
     // if best value for maximizer is the lowest possible then the game is lost
     if (value_n_index.first == (b.getNextPlayer() ? NEG_INF : INF)) {
@@ -23,6 +26,7 @@ pair<int, int> miniMax(Board b, int depth)
 {
     // If there's a win on the board or this is a max depth
     // then the method returns -1 as index.
+    g_number_of_recursions += 1;    
     bool previous_player = b.getPreviousPlayer();
     if (b.isWin()) {
         // We need to check whose turn was it before the last move
@@ -92,4 +96,8 @@ unsigned int countSetBits(bitboard n)
         count++;
     }
     return count;
+}
+
+int getRecursionCount(){
+    return g_number_of_recursions;
 }
