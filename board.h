@@ -46,6 +46,7 @@ class Board {
         void getMoves(bool* available);
         void printBoard();
         bool getNextPlayer(); // 0 for even, 1 for odd player
+        char getNextPlayerRepr();
         bool getPreviousPlayer(); // 0 for even, 1 for odd
         bitboard* getBitboards();
     private:

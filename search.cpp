@@ -5,7 +5,7 @@
 
 using namespace std;
 
-int g_number_of_positions_checked;
+long g_number_of_positions_checked;
 
 int getNextMove(Board b, int search_depth)
 {
@@ -25,10 +25,8 @@ pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
         // We need to check whose turn was it before the last move
         return make_pair((previous_player ? INF : NEG_INF), -1);
     } else if (depth == 0) {
-        int max_score = getValue(b.getBitboards(), previous_player);
-        int min_score = getValue(b.getBitboards(), !previous_player);
-        assert(max_score + min_score < max(min_score, max_score));
-        return make_pair(max_score + min_score, -1);
+        int score = getValue(b.getBitboards(), previous_player);
+        return make_pair(score, -1);
     }
 
     bool available[7] = { false };
@@ -45,7 +43,7 @@ pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
             }
             // maximizer
             if (b.getNextPlayer()) { 
-                if (cur_value > best_value) {
+                if (cur_value >= best_value) {
                     best_value = cur_value;
                     best_value_ix = i;
                     alpha = max(best_value, alpha);
@@ -56,7 +54,7 @@ pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
                 }
             // minimizer
             } else {
-                if (cur_value < best_value) {
+                if (cur_value <= best_value) {
                     best_value = cur_value;
                     best_value_ix = i;
                     beta = min(best_value, beta);
@@ -73,32 +71,38 @@ pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
 int getValue(bitboard* bitboards, bool previous_player)
 {
     g_number_of_positions_checked += 1;    
+    if (countWins(bitboards[0]) > 0){
+        return 1;
+    } else if (countWins(bitboards[1]) > 0){
+        return -1;
+    } else {
+        return 0;
+    }
     //int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
-    bitboard board = bitboards[previous_player];
-    int score = 0;
+    //bitboard board = bitboards[previous_player];
+    //int score = 0;
     //bitboard temp;
     //for (const int& direction : directions) {
     //    // Count three stones in a row
     //    temp = board >> direction;
     //    score += countSetBits(board & temp & (temp >> direction));
     //}
-    for (int i = 0; i < 14; i++) {
-        // Check how favorable is the position
-        if (IS_VALUE_USED[i]) {
-            score += countSetBits(board & MASKS[i]) * i;
-        }
-    }
+    //for (int i = 0; i < 14; i++) {
+    //    // Check how favorable is the position
+    //    if (IS_VALUE_USED[i]) {
+    //        score += countSetBits(board & MASKS[i]) * i;
+    //    }
+    //}
 
-    return (previous_player ? score : -score);
+    //return (previous_player ? score : -score);
 }
 
 int getValueBitwise(bitboard* bitboards, bool previous_player){
     g_number_of_positions_checked += 1;    
     int directions[] = { 1, 6, 7, 8 }; // vert, diag, diag, horizon
     int weights[] = { 
-        9, // possible winning lines missing 1 stone
-        3, // possible winning positions missing 2 stones
-        1, // possible winning positions missing 3 stones
+        3, // possible winning lines missing 1 stone
+        1, // possible winning positions missing 2 stones
     };
     int score = 0;
     bitboard board = bitboards[previous_player];
