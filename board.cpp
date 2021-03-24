@@ -22,9 +22,6 @@ void Board::getMoves(bool* available)
 int Board::makeMove(int column)
 {
     rawMakeMove(column);
-    printBoard();
-    cout << "Next move is for ";
-    cout << (getNextPlayer() ? " maximizer (X)" : " minimizer (O)") << endl;
     if (isWin()) {
         return -1;
     }
@@ -98,6 +95,10 @@ void Board::printBoard()
 
 bool Board::getNextPlayer(){
     return (counter & 1);
+}
+
+char Board::getNextPlayerRepr(){
+    return (counter & 1) ? ODD_SYMBOL : EVEN_SYMBOL;
 }
 
 bool Board::getPreviousPlayer(){
