@@ -91,7 +91,7 @@ int getValue(bitboard* bitboards, bool previous_player)
             score += countSetBits(board & MASKS[i]) * i;
         }
     }
-
+    g_number_of_positions_checked++;
     return (previous_player ? score : -score);
 }
 
