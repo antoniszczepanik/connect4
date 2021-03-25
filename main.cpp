@@ -6,6 +6,8 @@
 using namespace std;
 using namespace std::chrono;
 
+#define DEPTH 5
+
 
 Board makeAIMove(Board b, int depth){
     int move;
@@ -18,7 +20,9 @@ Board makeAIMove(Board b, int depth){
     cout << positions_checked << "K positions checked at ";
     cout << (positions_checked / seconds_passed) << "Kpos/s" << endl;
     if (move == -1){
-        return b;
+        b.printBoard();
+        cout << "No more moves - looks like a draw!" << endl;
+        exit(1);
     }
     b.makeMove(move);
     return b;
@@ -27,7 +31,7 @@ Board makeAIMove(Board b, int depth){
 int main(int argc, char* argv[]){
     Board b;
     int move;
-    int depth = stoi(argv[1]);
+    //int depth = stoi(argv[1]);
     while (true) {
         b.printBoard();
         cout << "Enter an next move for " << b.getNextPlayerRepr() << endl;
@@ -38,14 +42,14 @@ int main(int argc, char* argv[]){
                 b.printBoard();
                 break;
             case -2:
-                b = makeAIMove(b, depth);
+                b = makeAIMove(b, DEPTH);
                 break;
             case -3:
                 cout << "Board value: " << getValue(b.getBitboards(),b.getPreviousPlayer()) << endl;
                 break;
             case -4:
                 while(true){
-                    b = makeAIMove(b, depth);
+                    b = makeAIMove(b, DEPTH);
                     b.printBoard();
                     if (b.isWin()) break; 
                 }

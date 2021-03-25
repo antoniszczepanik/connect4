@@ -11,4 +11,4 @@ int getValue(bitboard* bitboards, bool previous_player);
 int getValueBitwise(bitboard* bitboards, bool previous_player);
 int countWins(bitboard board);
 unsigned int countSetBits(bitboard n);
-int getCheckedPositionsCount();
+unsigned long getCheckedPositionsCount();
