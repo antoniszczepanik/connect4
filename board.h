@@ -1,6 +1,9 @@
 #include <limits>
 #include <utility>
 
+#ifndef BOARD_H
+#define BOARD_H
+
 constexpr char ODD_SYMBOL = 'X';
 constexpr char EVEN_SYMBOL = 'O';
 constexpr long long LL1 = 1;
@@ -38,7 +41,9 @@ typedef long long bitboard;
 
 class Board {
     public:
+        Board() {};
         bool isWin();
+        int getNextMove(int search_depth);
         int makeMove(int column);
         void rawMakeMove(int column);
         void undoMove();
@@ -56,3 +61,4 @@ class Board {
         int move_history[42];
 };
 
+#endif

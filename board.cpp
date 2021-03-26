@@ -1,6 +1,7 @@
 #include <iostream>
 #include <emscripten/bind.h>
 #include "board.h"
+#include "search.h"
 
 using namespace std;
 
@@ -8,6 +9,15 @@ using namespace std;
 // allow use of bitwise operations to calculate the board value
 // and check winning conditions. For details please see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
+
+
+int Board::getNextMove(int search_depth)
+{
+    pair<int, int> value_n_index = miniMax(*this, search_depth, NEG_INF, INF);
+    cout << "Optimal move is " << value_n_index.second;
+    cout << " with value " << value_n_index.first << endl;
+    return value_n_index.second;
+}
 
 void Board::getMoves(bool* available)
 {
@@ -115,5 +125,7 @@ EMSCRIPTEN_BINDINGS(my_class_example) {
     emscripten::class_<Board>("Board")
     .constructor()
     .function("printBoard", &Board::printBoard)
+    .function("makeMove", &Board::makeMove)
+    .function("getNextMove", &Board::getNextMove)
     ;
 }

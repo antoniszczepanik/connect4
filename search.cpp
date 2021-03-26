@@ -2,19 +2,9 @@
 #include <utility>
 #include <assert.h>
 #include "search.h"
+#include "board.h"
 
 using namespace std;
-
-unsigned long g_number_of_positions_checked;
-
-int getNextMove(Board b, int search_depth)
-{
-    g_number_of_positions_checked = 0;
-    pair<int, int> value_n_index = miniMax(b, search_depth, NEG_INF, INF);
-    cout << "Optimal move is " << value_n_index.second;
-    cout << " with value " << value_n_index.first << endl;
-    return value_n_index.second;
-}
 
 pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
 {
@@ -91,10 +81,5 @@ int getValue(bitboard* bitboards, bool previous_player)
             score += __builtin_popcountll(board & MASKS[i]) * i;
         }
     }
-    g_number_of_positions_checked++;
     return (previous_player ? score : -score);
-}
-
-unsigned long getCheckedPositionsCount(){
-    return g_number_of_positions_checked;
 }
