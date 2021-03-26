@@ -83,26 +83,16 @@ int getValue(bitboard* bitboards, bool previous_player)
     for (const int& direction : directions) {
         // Count number of threes
         temp = board >> direction;
-        score += countSetBits(board & temp & (temp >> direction));
+        score += __builtin_popcountll(board & temp & (temp >> direction));
     }
     for (int i = 0; i < 14; i++) {
         // Check how favorable is the position
         if (IS_VALUE_USED[i]) {
-            score += countSetBits(board & MASKS[i]) * i;
+            score += __builtin_popcountll(board & MASKS[i]) * i;
         }
     }
     g_number_of_positions_checked++;
     return (previous_player ? score : -score);
-}
-
-unsigned int countSetBits(bitboard n)
-{
-    int count = 0;
-    while (n) {
-        n &= (n - 1);
-        count++;
-    }
-    return count;
 }
 
 unsigned long getCheckedPositionsCount(){
