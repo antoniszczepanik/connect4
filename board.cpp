@@ -1,4 +1,5 @@
 #include <iostream>
+#include <emscripten/bind.h>
 #include "board.h"
 
 using namespace std;
@@ -107,4 +108,12 @@ bool Board::getPreviousPlayer(){
 
 bitboard* Board::getBitboards(){
     return boards;
+}
+
+// Binding code
+EMSCRIPTEN_BINDINGS(my_class_example) {
+    emscripten::class_<Board>("Board")
+    .constructor()
+    .function("printBoard", &Board::printBoard)
+    ;
 }

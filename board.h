@@ -55,3 +55,4 @@ class Board {
         int counter = 0;  // Allows to distinguish between players with (counter & 1)
         int move_history[42];
 };
+
