@@ -32,9 +32,12 @@ void Board::getMoves(bool* available)
 
 int Board::makeMove(int column)
 {
+    if (column < 6 || column < 0){
+        return 1;
+    }
     rawMakeMove(column);
     if (isWin()) {
-        return -1;
+        return 2;
     }
     return 0;
 }

@@ -44,6 +44,10 @@ class Board {
         Board() {};
         bool isWin();
         int getNextMove(int search_depth);
+        // Make move in column 0-6. Player is determined automatically
+        // Returns 0 if made move sucessfuly. Returns 1 if player tries 
+        // invalid move. 2 is returned when move was made successfull and 
+        // ended the game.
         int makeMove(int column);
         void rawMakeMove(int column);
         void undoMove();
