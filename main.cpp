@@ -6,7 +6,7 @@
 using namespace std;
 using namespace std::chrono;
 
-#define DEPTH 5
+#define DEPTH 10
 
 
 Board makeAIMove(Board b, int depth){
@@ -22,7 +22,7 @@ Board makeAIMove(Board b, int depth){
     if (move == -1){
         b.printBoard();
         cout << "No more moves - looks like a draw!" << endl;
-        exit(1);
+        exit(0);
     }
     b.makeMove(move);
     return b;
