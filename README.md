@@ -1,24 +1,23 @@
 # Connect4
-The goal of this project is to have Connect4 game with possibly computer opponent in the browser. Game engine and AI will be implemented in C++ and transpiled to WASM, which means all computations will run on the client.
-It will be interesting to see how much we can optimize using bitboards, minimax algorithm and how much overhead is introduced by converting such implementation to WASM.
+This is [connect-four](https://en.wikipedia.org/wiki/Connect_Four) AI written
+in C++ and compiled to WASM which allows to run it 100% on the client.
+You can adjust algorithms search depth and try to beat it at various difficulty
+levels. Check your skills [here](http://iwillbeheresoon.ipromise)
 
-## AI
-Minimax algorithm with alpha-beta prunning extension is defacto standard in simple
-turned based games like Connect4. That's what is used in this project as well.
+(image will be here soon)
 
-TODO:
+You could also use it to cheat, but hey, I hope you're not a cheater.
 
-- There seems to be a problem with alpha/beta pruning - to much pruning happens.
+### Why is it interesting?
 
-- Memoising recently requested boards in a hash table. Kind of LRU cache for getting borard values. How much memory can we afford to use in the browser?
+A lot of board valuations are performed, so valuation function and win checking 
+function need to be REALLY fast. To achieve that super-efficient 64bit 
+representation is used for the board. It allows to check for a win with 3 
+bitshifts, which is kinda insane. Dominikus Herzberg has written [excellent
+article](https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md)
+explaining how it works, I highly recommend it!
 
-
-## Board Representation
-The board is represented using 64 bit integer. It allows to use
-bitwise operations to check for a win and available moves, which is REALLY FAST. Bitwise operations are also used to valuate static board positions. To read more about this stuff make sure to see https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
-It's really clever!
-
-```
+```txt
   6 13 20 27 34 41 48   55 62     Additional row
 +---------------------+ 
 | 5 12 19 26 33 40 47 | 54 61     top row
@@ -30,4 +29,22 @@ It's really clever!
 +---------------------+
 ```
 
-## Converting C++ implementation to WASM
+TODO: How fast are bitwise operations in WASM? How much overhead is introduced
+by running the code on 32bit machine?
+
+### Search algorithm 
+
+To search the game tree MiniMax algorithm with alpha/beta prunning was used.
+It was really rewarding to implement such a classic from scratch and I suggest
+anyone interested in turn based game AIs should give it a try :) 
+
+### Comparison of C++ and WASM
+
+Comparing to native C++ implementation WASM code is around X% slower,
+on 2.1Ghz AMD CPU and Y% slower on iPhone 11.
+Still, bitboard implementation allows it evaluate around X boards
+positions/second, which means exploring tree with depth of Z is feaseable even on
+mobile devices.
+
+\*Disclaimer - the game has been solved, but such a huge game tree makes 
+it really interesting playground nonetheless.
