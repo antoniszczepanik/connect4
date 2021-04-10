@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <emscripten/bind.h>
 #include "board.h"
 #include "search.h"
@@ -7,10 +8,8 @@ using namespace std;
 
 // This implementation uses bitboard as representations to
 // allow use of bitwise operations to calculate the board value
-// and check winning conditions. For details please see:
+// and check winning conditions. For details see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
-
-
 int Board::getNextMove(int search_depth)
 {
     pair<int, int> value_n_index = miniMax(*this, search_depth, NEG_INF, INF);
@@ -32,7 +31,7 @@ void Board::getMoves(bool* available)
 
 int Board::makeMove(int column)
 {
-    if (column < 6 || column < 0){
+    if (column > 6 || column < 0){
         return 1;
     }
     rawMakeMove(column);
@@ -119,16 +118,36 @@ bool Board::getPreviousPlayer(){
     return ((counter -1) & 1);
 }
 
-bitboard* Board::getBitboards(){
+string Board::getBoardStr(){
+    string board_str;
+    int index, i, j;
+    for (i = 5; i >= 0; i--){
+        for (j = 0; j <= 6; j++){
+            index = i + (7 * j); // to go from top left
+            if ((boards[0] & (LL1 << index)) != 0) {
+                board_str.push_back('1');
+            } else if ((boards[1] & (LL1 << index)) != 0) {
+                board_str.push_back('2');
+            } else {
+                board_str.push_back('0');
+            }
+
+        }
+    }
+    return board_str;
+}
+
+bitboard* Board::getBitboards(){    
     return boards;
 }
 
-// Binding code
+// Binding to WASM
 EMSCRIPTEN_BINDINGS(my_class_example) {
     emscripten::class_<Board>("Board")
     .constructor()
     .function("printBoard", &Board::printBoard)
     .function("makeMove", &Board::makeMove)
     .function("getNextMove", &Board::getNextMove)
+    .function("getBoardStr", &Board::getBoardStr)
     ;
 }

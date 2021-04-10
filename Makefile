@@ -1,8 +1,8 @@
 build: clean
-	mkdir -p out
-	em++ --bind *.cpp -s WASM=1 -o out/wasm.js
+	em++ --bind *.cpp -g -s WASM=1 -o out/wasm.js
+	cp client/* out/
 clean:
 	rm -rf out
+	mkdir -p out
 serve: build
-	cp client/* out/
 	cd out && python3 -m http.server

@@ -1,5 +1,6 @@
 #include <limits>
 #include <utility>
+#include <string>
 
 #ifndef BOARD_H
 #define BOARD_H
@@ -51,12 +52,30 @@ class Board {
         int makeMove(int column);
         void rawMakeMove(int column);
         void undoMove();
-        // Update available list with all possible moves
+
+        //  List all possible moves
         void getMoves(bool* available);
         void printBoard();
         bool getNextPlayer(); // 0 for even, 1 for odd player
         char getNextPlayerRepr();
         bool getPreviousPlayer(); // 0 for even, 1 for odd
+
+        // Get board as a string in an easy to digest format,
+        // starting from top-right corner and going row by row.
+        // 1s represent first player, 2s second. 
+        // Example:
+        // 0 0 0 0 0 0 0
+        // 0 0 0 0 0 0 0
+        // 0 0 0 0 0 0 0
+        // 0 0 0 0 0 0 0
+        // 1 2 0 1 2 1 0
+        // 1 2 0 1 2 1 0
+        // For such board the return value would be
+        // "000000000000000000000000000012012101201210"
+        // This is neccesary because we can't return arrays from C++ in WASM.
+        std::string getBoardStr();
+
+        // Returns a pointer to private bitboards array
         bitboard* getBitboards();
     private:
         bitboard boards[2] = {0, 0};  // Two seperate boards for O and X
