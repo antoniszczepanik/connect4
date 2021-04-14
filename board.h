@@ -51,8 +51,8 @@ class Board {
         // ended the game.
         int makeMove(int column);
         void rawMakeMove(int column);
-        void undoMove();
-
+        int undoMove();
+        void rawUndoMove();
         //  List all possible moves
         void getMoves(bool* available);
         void printBoard();

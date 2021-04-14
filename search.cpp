@@ -33,7 +33,7 @@ pair<int, int> miniMax(Board b, int depth, int alpha, int beta)
             }
             b.rawMakeMove(i);
             cur_value = miniMax(b, depth - 1, alpha, beta).first;
-            b.undoMove();
+            b.rawUndoMove();
             if (cur_value == (b.getNextPlayer() ? INF : NEG_INF)) {
                 return make_pair(cur_value, i);
             }

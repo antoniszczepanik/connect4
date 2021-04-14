@@ -1,0 +1,31 @@
+*{
+  font-family: sans-serif;
+  max-width: 600px;
+  margin: 0.5em auto;
+  text-align: center;
+}
+
+#board {
+  font-size: 1.7em;
+  border-spacing: 0.4em 0.3em;
+  border: #4a4a4a 0.7em solid;
+  border-radius: 1em;
+  box-sizing: content-box;
+}
+
+.cell {
+  background-color: none;
+  border-collapse: separate;
+  border: #4a4a4a 0.5em solid;
+  border-radius: 2em;
+  height: 1em;
+  width: 1em;
+}
+
+.cell.red {
+  background-color: red;
+}
+
+.cell.blue {
+  background-color: blue;
+}

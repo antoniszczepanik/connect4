@@ -2,16 +2,30 @@
 <html>
   <head>
     <title>ConnectFour</title>
+    <link rel="stylesheet" href="style.css">
     <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
     <meta content="utf-8" http-equiv="encoding">
     <meta name="description" content="Connect four playground">
   </head>
 
   <body>
+    <h1>Connect 4</h1>
     <table id="board">
     </table>
+
+    <button type="button" onclick="connect4.makeAIMove()">Make auto move</button>
+    <button type="button" onclick="connect4.undoMove()">Undo move</button>
+
+    <div class="DepthController">
+      <h3>Search Depth</h3>
+      <div class="DepthSlider">
+        <input type="range" min="1" max="15" value="8" oninput="connect4.updateDepthLabel(this.value)">
+      </div>
+      <h4 id=depth_label>8</h4>
+    </div>
+
+    <script src="wasm.js"></script>
+    <script src="script.js"></script>
   </body>
 
-  <script src="wasm.js"></script>
-  <script src="script.js"></script>
 </html>

@@ -31,13 +31,17 @@ void Board::getMoves(bool* available)
 
 int Board::makeMove(int column)
 {
-    if (column > 6 || column < 0){
-        return 1;
-    }
-    rawMakeMove(column);
     if (isWin()) {
         return 2;
     }
+    if (column > 6 || column < 0){
+        return 1;
+    }
+    // Move not available
+    if (heights[column] + 1 > ((column * 7) + 7)){
+        return 1;
+    }
+    rawMakeMove(column);
     return 0;
 }
 
@@ -48,7 +52,15 @@ void Board::rawMakeMove(int column)
     counter++;
 }
 
-void Board::undoMove()
+int Board::undoMove(){
+    if (counter == 0){
+        return 1;
+    }
+    rawUndoMove();
+    return 0;
+}
+
+void Board::rawUndoMove()
 {
     int previous_move = move_history[--counter];
     boards[getNextPlayer()] ^= LL1 << --heights[previous_move];
@@ -78,8 +90,7 @@ void Board::printBoard()
             board_arr[i] = 1;
         }
         if ((boards[1] & (LL1 << i)) != 0) {
-            board_arr[i] = -1;
-        }
+            board_arr[i] = -1; }
     }
     for (int i = 5; i >= 0; i--) {
         cout << "|";
@@ -147,6 +158,7 @@ EMSCRIPTEN_BINDINGS(my_class_example) {
     .constructor()
     .function("printBoard", &Board::printBoard)
     .function("makeMove", &Board::makeMove)
+    .function("undoMove", &Board::undoMove)
     .function("getNextMove", &Board::getNextMove)
     .function("getBoardStr", &Board::getBoardStr)
     ;
