@@ -2,13 +2,21 @@ const WIDTH=7;
 const HEIGHT=6;
 
 connect4 = function(){
+
   Module.onRuntimeInitialized = async _ => {
     b =  new Module.Board();
   };
 
+  // A pinch of global state, sorry :(
+  let highlighted_cell = {
+    cell: null,
+    column: -1,
+  }
+
   function initialize(){
     initializeBoard();
     document.addEventListener("click", makeManualMove);
+    document.addEventListener("mousemove", highlightOnHover);
   }
 
   function initializeBoard(){
@@ -61,7 +69,12 @@ connect4 = function(){
         let cell_target_value = board_str.charAt(board_str_i);
         let cell = document.getElementById(`${row_i}${col_i}`);
         if (cell.getAttribute("data-value") != cell_target_value){
-          console.log("updating data-value of cell to", cell_target_value)
+
+          // We can do better in the future, right? Sorry...
+          cell.classList.remove("hover-blue");
+          cell.classList.remove("hover-red");
+          highlighted_cell.column = -1;
+
           cell.setAttribute("data-value", cell_target_value)
           if (cell_target_value == 1){
               cell.classList.remove("blue")
@@ -92,6 +105,31 @@ connect4 = function(){
       return Math.floor((event.clientX - left)/col_width)
     } else {
       return -1;
+    }
+  }
+  
+  function highlightOnHover(event){
+    let target_col = getTargetColumnFromPosition(event);
+    if (target_col != highlighted_cell.column){
+      if (highlighted_cell.cell){
+        highlighted_cell.cell.classList.remove("hover-blue");
+        highlighted_cell.cell.classList.remove("hover-red");
+      }
+      if (target_col == -1) return;
+      // iterate from top to bottom and chech values
+      let previous_cell;
+      for (let row_i=0; row_i<6; row_i++){
+        let target_cell = document.getElementById(`${row_i}${target_col}`)
+        if (target_cell.getAttribute("data-value") != 0){
+          break;
+        }
+        previous_cell = target_cell;
+      }
+      if (previous_cell){
+        previous_cell.classList.add(b.getNextPlayer() ? "hover-blue" : "hover-red");
+        highlighted_cell.cell = previous_cell;
+        highlighted_cell.column = target_col;
+      }
     }
   }
 

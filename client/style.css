@@ -29,3 +29,10 @@
 .cell.blue {
   background-color: blue;
 }
+.cell.hover-blue {
+  background-color: lightskyblue;
+}
+
+.cell.hover-red {
+  background-color: lightcoral;
+}

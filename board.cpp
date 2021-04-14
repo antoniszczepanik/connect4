@@ -160,6 +160,7 @@ EMSCRIPTEN_BINDINGS(my_class_example) {
     .function("makeMove", &Board::makeMove)
     .function("undoMove", &Board::undoMove)
     .function("getNextMove", &Board::getNextMove)
+    .function("getNextPlayer", &Board::getNextPlayer)
     .function("getBoardStr", &Board::getBoardStr)
     ;
 }
