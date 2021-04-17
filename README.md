@@ -2,9 +2,9 @@
 This is [connect-four](https://en.wikipedia.org/wiki/Connect_Four) AI written
 in C++ and compiled to WASM which allows to run it 100% on the client.
 You can adjust algorithms search depth and try to beat it at various difficulty
-levels. Feel free to heck your skilz [here.](http://iwillbeheresoon.ipromise)
+levels. Feel free to check your skilz [here.](http://iwillbeheresoon.ipromise)
 
-(image will be here soon)
+![This is connect4 in case you don't know](./doc/screenshot.png)
 
 You could also use it to cheat, but hey, I hope you're not a cheater.
 
@@ -38,7 +38,7 @@ It was really rewarding to implement such a classic from scratch and I suggest
 anyone interested in turn based game AIs should give it a try :) 
 
 \*Disclaimer - the game has been solved, but such a huge game tree makes 
-it really interesting playground nonetheless.
+it interesting playground nonetheless.
 
 ### TODO
 - How fast are bitwise operations in WASM? How much overhead is introduced
