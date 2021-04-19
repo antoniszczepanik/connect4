@@ -2,7 +2,7 @@
 This is [connect-four](https://en.wikipedia.org/wiki/Connect_Four) AI written
 in C++ and compiled to WASM which allows to run it 100% on the client.
 You can adjust algorithms search depth and try to beat it at various difficulty
-levels. Feel free to check your skilz [here.](http://iwillbeheresoon.ipromise)
+levels. Feel free to check your skilz [here.](http://connect4.antoniszczepanik.com)
 
 ![This is connect4 in case you don't know](./doc/screenshot.png)
 
