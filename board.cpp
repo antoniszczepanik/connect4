@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 #include <emscripten/bind.h>
 #include "board.h"
 #include "search.h"
@@ -10,23 +9,26 @@ using namespace std;
 // allow use of bitwise operations to calculate the board value
 // and check winning conditions. For details see:
 // https://github.com/denkspuren/BitboardC4/blob/master/BitboardDesign.md
+
 int Board::getNextMove(int search_depth)
 {
-    pair<int, int> value_n_index = miniMax(*this, search_depth, NEG_INF, INF);
-    cout << "Optimal move is " << value_n_index.second;
-    cout << " with value " << value_n_index.first << endl;
-    return value_n_index.second;
+    result_t result = miniMax(*this, search_depth);
+    cout << "Optimal move is " << result.move;
+    cout << " with value " << result.value << " at depth " << result.depth << endl;
+    return result.move;
 }
 
-void Board::getMoves(bool* available)
+std::vector<int> Board::getMoves()
 {
+    std::vector<int> available_moves;
     // This row is not part of the board, used only to check for overflows
     long long top_row = 0b1000000100000010000001000000100000010000001000000;
     for (int col = 0; col < 7; col++) {
         if ((top_row & (LL1 << heights[col])) == 0) {
-            available[col] = true;
+            available_moves.push_back(col);
         }
     }
+    return available_moves;
 }
 
 int Board::makeMove(int column)

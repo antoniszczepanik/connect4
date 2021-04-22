@@ -1,6 +1,7 @@
 #include <limits>
 #include <utility>
 #include <string>
+#include <vector>
 
 #ifndef BOARD_H
 #define BOARD_H
@@ -54,7 +55,7 @@ class Board {
         int undoMove();
         void rawUndoMove();
         //  List all possible moves
-        void getMoves(bool* available);
+        std::vector<int> getMoves();
         void printBoard();
         bool getNextPlayer(); // 0 for even, 1 for odd player
         char getNextPlayerRepr();
