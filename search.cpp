@@ -19,61 +19,118 @@ result_t miniMax(Board b, int depth)
     return getBestMove(b, depth);
 }
 
-
 result_t getBestMove(Board b, int depth){
     std::vector<result_t> possible_results = getPossibleResults(b, depth);
-    // Select the best move out of all available children moves
-    result_t best_result = { -1, b.getNextPlayer() ? NEG_INF : INF, -99};
+    if (possible_results.size() == 0) {
+        // The board is full.
+        return makeResult(-1, 0, 0);
+    } else if (possible_results.size() == 1) {
+        // There is unique result.
+        return possible_results[0];
+    }
+
+    // Otherwise there are multiple results with the same value:
+    //
+    //  * If posiblle results are all winning we would like to win
+    //    as soon as possible (picking move with minimum depth).
+    //
+    //  * If posiblle results are all loosing we would like to loose
+    //    as soon as possible (picking move with maximum depth).
+    //
+    //  * If there are no loosing/winning moves it doesn't matter which one
+    //    we choose because they all must come from leaf nodes (their depth is
+    //    the same).
+    
+    result_t best_result = possible_results[0];
+    // Hangle neither loosing nor winning case
+    if ((best_result.value != INF) && (best_result.value != NEG_INF)){
+        return best_result;
+    }
+    bool is_best_value_favorable;
+    if (b.getNextPlayer()){
+        is_best_value_favorable = (best_result.value == INF);
+    } else {
+        is_best_value_favorable = (best_result.value == NEG_INF);
+    }
+    bool first = true;
     for (result_t cur_result : possible_results) {
-        // even in case all moves loose, choose first available
-        if (best_result.move == -1){
-            best_result = cur_result;
+        if (first){
+            first = false;
+            continue;
         }
-        // if this is a win just return it (TODO: for now)
-        if (cur_result.value == (b.getNextPlayer() ? INF : NEG_INF)) {
-            return makeResult(cur_result.move, cur_result.value, cur_result.depth);
-        }
-        // maximizer
-        if (b.getNextPlayer()) { 
-            if (cur_result.value > best_result.value) {
+        if (is_best_value_favorable){
+            // The faster we can win the better.
+            if (cur_result.depth < best_result.depth){
                 best_result = cur_result;
             }
-        // minimizer
         } else {
-            if (cur_result.value < best_result.value) {
+            // The later we can loose the better.
+            if (cur_result.depth > best_result.depth){
                 best_result = cur_result;
             }
         }
     }
-    return makeResult(best_result.move, best_result.value, best_result.depth);
+    return best_result;
 }
 
 std::vector<result_t> getPossibleResults(Board b, int depth){
-    std::vector<int> available_moves = b.getMoves();
+    // In case the best value is unique return vector of size 1.
+    // Otherwise return multiple winning or loosing moves.
+    std::array<bool, 7> available_moves = b.getMoves();
     std::vector<result_t> possible_results;
-    if (available_moves.empty()) {
+    bool all_false = true;
+    for (int i = 0; i < 7; i++){
+        if (available_moves[i]){
+            all_false = false;
+        }
+    }
+    if (all_false) {
         return possible_results;
     }
+
+    std::vector<result_t> loosing_moves;
+    bool all_moves_are_loosing = true;
+    result_t best_result = makeResult(-1, (b.getNextPlayer() ? NEG_INF : INF), -99);
     result_t cur_result;
-    for (int move : available_moves){
-        b.rawMakeMove(move);
-        cur_result = miniMax(b, depth - 1);
-        b.rawUndoMove();
-        // Let's collect all best possible values
-        // if (cur_result.value == (b.getNextPlayer() ? INF : NEG_INF)) {
-        //    possible_results.push_back(makeResult(move, cur_result.value, cur_result.depth+1));
-        //    continue
-        //}
-        // Let's collect everything for now.
-        // TODO: Alpha-Beta prunning needs to make it's way back here
-        possible_results.push_back(makeResult(move, cur_result.value, cur_result.depth+1));
+    for (int move = 0; move < 7; move++){
+        if (available_moves[move]){
+            b.rawMakeMove(move);
+            cur_result = miniMax(b, depth - 1);
+            cur_result.depth += 1;
+            cur_result.move = move;
+            b.rawUndoMove();
+            if (b.getNextPlayer()) { 
+                // Maximizer
+                if (cur_result.value == INF){
+                    possible_results.push_back(cur_result);
+                    all_moves_are_loosing = false;
+                } else if (cur_result.value > best_result.value) {
+                    best_result = cur_result;
+                    all_moves_are_loosing = false;
+                } else if (all_moves_are_loosing && (best_result.value == NEG_INF)){
+                    loosing_moves.push_back(cur_result);
+                }
+            } else {
+                // Minimizer
+                if (cur_result.value == NEG_INF){
+                    possible_results.push_back(cur_result);
+                    all_moves_are_loosing = false;
+                } else if (cur_result.value < best_result.value) {
+                    best_result = cur_result;
+                    all_moves_are_loosing = false;
+                } else if (all_moves_are_loosing && (best_result.value == INF)) {
+                    loosing_moves.push_back(cur_result);
+                }
+            }
+        }
+    }
+    if (all_moves_are_loosing){
+        return loosing_moves;
+    }
+    if (possible_results.empty()){
+        possible_results.push_back(best_result);
     }
     return possible_results;
-}
-
-result_t makeResult(int move, int value, int depth){
-    result_t res = { move, value, depth };
-    return res;
 }
 
 int getValue(bitboard* bitboards, bool previous_player)
@@ -94,4 +151,9 @@ int getValue(bitboard* bitboards, bool previous_player)
         }
     }
     return (previous_player ? score : -score);
+}
+
+result_t makeResult(short move, int value, short depth){
+    result_t res = { move, value, depth };
+    return res;
 }

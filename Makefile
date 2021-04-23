@@ -1,5 +1,5 @@
 build: clean
-	em++ --bind *.cpp -g -s WASM=1 -o out/wasm.js
+	em++ --bind *.cpp -s WASM=1 -o out/wasm.js
 	cp client/* out/
 clean:
 	rm -rf out

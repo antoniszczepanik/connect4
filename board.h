@@ -1,7 +1,7 @@
 #include <limits>
 #include <utility>
 #include <string>
-#include <vector>
+#include <array>
 
 #ifndef BOARD_H
 #define BOARD_H
@@ -55,7 +55,7 @@ class Board {
         int undoMove();
         void rawUndoMove();
         //  List all possible moves
-        std::vector<int> getMoves();
+        std::array<bool, 7> getMoves();
         void printBoard();
         bool getNextPlayer(); // 0 for even, 1 for odd player
         char getNextPlayerRepr();
@@ -83,6 +83,7 @@ class Board {
         int heights[7] = {0, 7, 14, 21, 28, 35, 42};  // Mark height in each col
         int counter = 0;  // Allows to distinguish between players with (counter & 1)
         int move_history[42];
+        bool next_player = false;
 };
 
 #endif

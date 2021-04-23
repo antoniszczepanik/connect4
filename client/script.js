@@ -4,19 +4,16 @@ const HEIGHT=6;
 connect4 = function(){
 
   Module.onRuntimeInitialized = async _ => {
+    initializeBoard();
     b =  new Module.Board();
+    document.addEventListener("click", makeManualMove);
+    document.addEventListener("mousemove", highlightOnHover);
   };
 
   // A pinch of global state, sorry :(
   let highlighted_cell = {
     cell: null,
     column: -1,
-  }
-
-  function initialize(){
-    initializeBoard();
-    document.addEventListener("click", makeManualMove);
-    document.addEventListener("mousemove", highlightOnHover);
   }
 
   function initializeBoard(){
@@ -40,8 +37,11 @@ connect4 = function(){
   }
 
   function makeMove(column){
-      b.makeMove(column);
-      renderBoard();
+      if(b.makeMove(column) != 2){
+        renderBoard();
+      } else {
+        document.getElementById("end_message").innerHTML = "It looks like there's a win on the board!";
+      };
   }
 
   // We want to be agnosting to height of the click, so let's
@@ -53,11 +53,18 @@ connect4 = function(){
   
   function makeAIMove(){
     let depth = parseInt(document.getElementById("depth_label").innerHTML);
-    makeMove(b.getNextMove(depth));
+    let next_move = b.getNextMove(depth);
+    if (next_move != -1) {
+      makeMove(next_move);
+    } else {
+      document.getElementById("end_message").innerHTML = "It looks like there's a win on the board!";
+    }
+
   }
   
   function undoMove(){
     b.undoMove();
+    document.getElementById("end_message").innerHTML = "";
     renderBoard();
   }
   
@@ -134,11 +141,8 @@ connect4 = function(){
   }
 
   return { 
-    init:initialize,
     updateDepthLabel: updateDepthLabel,
     makeAIMove: makeAIMove,
     undoMove: undoMove,
    }
 }();
-
-connect4.init();

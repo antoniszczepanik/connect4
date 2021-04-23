@@ -9,6 +9,9 @@
   </head>
 
   <body>
+    
+    <h3 id="end_message"></h3>
+
     <table id="board">
     </table>
 
@@ -18,9 +21,9 @@
     <div class="DepthController">
       <h3>Search Depth</h3>
       <div class="DepthSlider">
-        <input type="range" min="1" max="15" value="8" oninput="connect4.updateDepthLabel(this.value)">
+        <input type="range" min="3" max="9" value="5" oninput="connect4.updateDepthLabel(this.value)">
       </div>
-      <h4 id=depth_label>8</h4>
+      <h4 id=depth_label>5</h4>
     </div>
 
     <script src="wasm.js"></script>
