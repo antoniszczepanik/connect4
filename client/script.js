@@ -18,9 +18,9 @@ connect4 = function(){
 
   function initializeBoard(){
     let board = document.getElementById("board");
-    for (var row = 0; row < 6; row++) {
+    for (var row = 0; row < HEIGHT; row++) {
       let tr = document.createElement('tr');
-      for (var col = 0; col < 7; col++) {
+      for (var col = 0; col < WIDTH; col++) {
           let td = document.createElement('td');
           td.id = `${row}${col}`;
           td.className += "cell"
@@ -64,15 +64,15 @@ connect4 = function(){
   
   function undoMove(){
     b.undoMove();
-    document.getElementById("end_message").innerHTML = "";
+    document.getElementById("end_message").innerHTML = "&nbsp;";
     renderBoard();
   }
   
   function renderBoard(){
     let board_str = b.getBoardStr();
-    for (let row_i = 0; row_i < 6; row_i++){
-      for (let col_i = 0; col_i < 7; col_i++){
-        let board_str_i = (row_i * 7) + col_i;
+    for (let row_i = 0; row_i < HEIGHT; row_i++){
+      for (let col_i = 0; col_i < WIDTH; col_i++){
+        let board_str_i = (row_i * WIDTH) + col_i;
         let cell_target_value = board_str.charAt(board_str_i);
         let cell = document.getElementById(`${row_i}${col_i}`);
         if (cell.getAttribute("data-value") != cell_target_value){
@@ -125,7 +125,7 @@ connect4 = function(){
       if (target_col == -1) return;
       // iterate from top to bottom and chech values
       let previous_cell;
-      for (let row_i=0; row_i<6; row_i++){
+      for (let row_i=0; row_i<HEIGHT; row_i++){
         let target_cell = document.getElementById(`${row_i}${target_col}`)
         if (target_cell.getAttribute("data-value") != 0){
           break;
