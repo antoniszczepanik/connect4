@@ -1,0 +1,21 @@
+Hi! This is connect-four, a 2-player turn-based game in which each players 
+goal is to connect 4 disks by dropping them into 7x6 grid.
+The game has been solved (starting player always wins), however game tree is
+quite large which makes it interesting algorithmic playground.
+
+You can
+
+You can try to
+- What can you do here?
+  - You can try to make automatic move
+  - X valuations have been made in Y seconds
+  - You can also undo move and explore
+
+- How is this implemented
+  - MiniMax algorithm
+    - without popular alpha-beta prunning - evaluation of all moves
+      turns out to be more important
+  - Bitboards (link Dominikus)
+  - Technology used C++ -> WASM
+
+Enjoy :)
